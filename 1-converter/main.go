@@ -25,10 +25,10 @@ func main() {
 	// Вывод: 100.00 EUR → 9156.52 RUB
 }
 
-func inputUser() (string, float32, string, error) {
+func inputUser() (string, float64, string, error) {
 
 	var fromCurrency string
-	var amount float32
+	var amount float64
 	var toCurrency string
 
 	keys := getKeyCurrency()
