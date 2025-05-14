@@ -2,15 +2,24 @@ package main
 
 import (
 	"fmt"
+	"test/api/api"
 	"test/api/bins"
+	"test/api/config"
 	"test/api/file"
 	"test/api/storage"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// Создаем новый Bin
-	bin := bins.CreateBin("12345", true, "My Bin")
-	storage.SaveBin(bin)
+	godotenv.Load()
+	db := file.NewJsonDb("bins.json")
+	api.NewApi(*config.NewConfig())
+	binStorage := storage.NewBin(db)
+
+	bin := bins.CreateBin("123", true, "My Bin")
+	binStorage.AddBin(bin)
+	binStorage.SaveBin()
 
 	_, err := file.ReadFile("bins.json")
 
