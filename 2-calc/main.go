@@ -1,11 +1,19 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
 )
+
+var calcOperation = map[string]func(...int) float64{
+	"AVG": calcAvg,
+	"SUM": calcSum,
+	"MED": calcMed,
+}
 
 func main() {
 
@@ -21,7 +29,9 @@ func main() {
 		return
 	}
 
-	result := calcFunc(function, numbers)
+	calcFunc := calcOperation[function]
+
+	result := calcFunc(numbers...)
 
 	fmt.Println(result)
 }
@@ -30,20 +40,20 @@ func inputUser() (string, string, error) {
 	var inputFunc string
 	var inputNumb string
 
-	fmt.Print("Введите метод(AVG/SUM/MED): ")
-	fmt.Scan(&inputFunc)
+	reader := bufio.NewReader(os.Stdin)
 
-	switch inputFunc {
-	case "AVG":
-	case "SUM":
-	case "MED":
-		break
-	default:
+	fmt.Print("Введите метод(AVG/SUM/MED): ")
+	inputFunc, _ = reader.ReadString('\n')   // Считывает до Enter
+	inputFunc = strings.TrimSpace(inputFunc) // Убираем пробелы и Enter
+
+	_, ok := calcOperation[inputFunc]
+	if ok == false {
 		return "", "", fmt.Errorf("неизвестная функция: %s", inputFunc)
 	}
 
 	fmt.Print("Введите числа: ")
-	fmt.Scan(&inputNumb)
+	inputNumb, _ = reader.ReadString('\n')   // Считывает до Enter
+	inputNumb = strings.TrimSpace(inputNumb) // Убираем пробелы и Enter
 
 	return inputFunc, inputNumb, nil
 }
@@ -71,32 +81,29 @@ func getMassiveNumb(numbString string) ([]int, error) {
 
 }
 
-func calcFunc(nameFunc string, numbers []int) float64 {
+func calcAvg(numbers ...int) float64 {
 	var result float64
 
-	if nameFunc == "AVG" || nameFunc == "SUM" {
-		for _, sum := range numbers {
-			result += float64(sum)
-		}
+	result = calcSum(numbers...)
+	return result / float64(len(numbers))
+}
 
-		if nameFunc == "SUM" {
-			return result
-		}
-
-		return result / float64(len(numbers))
+func calcSum(numbers ...int) float64 {
+	var result float64
+	for _, sum := range numbers {
+		result += float64(sum)
 	}
+	return result
+}
 
-	if nameFunc == "MED" {
-		sort.Ints(numbers)
-		l := len(numbers)
-		if l%2 == 0 {
-			result = float64((numbers[l/2-1] + numbers[l/2]) / 2)
-		} else {
-			result = float64(numbers[l/2])
-		}
-
-		return result
+func calcMed(numbers ...int) float64 {
+	var result float64
+	sort.Ints(numbers)
+	l := len(numbers)
+	if l%2 == 0 {
+		result = float64((numbers[l/2-1] + numbers[l/2]) / 2)
+	} else {
+		result = float64(numbers[l/2])
 	}
-
-	return 0
+	return result
 }
