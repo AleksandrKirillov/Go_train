@@ -83,7 +83,10 @@ func (a *ApiStruct) Create(nameBin string, fileName string) *IdBin {
 	}
 
 	var idB MetaData
-	json.Unmarshal(body, &idB)
+	err = json.Unmarshal(body, &idB)
+	if err != nil {
+		return nil
+	}
 
 	fmt.Println(idB)
 
@@ -192,7 +195,10 @@ func (a *ApiStruct) Get(id string) error {
 
 	fmt.Println(string(body))
 	var idB MetaData
-	json.Unmarshal(body, &idB)
+	err = json.Unmarshal(body, &idB)
+	if err != nil {
+		return errors.New("ERROR_PARSE_JSON")
+	}
 
 	fmt.Println(idB)
 	return nil
