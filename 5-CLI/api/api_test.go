@@ -52,7 +52,7 @@ func TestGet(t *testing.T) {
 		t.Error("Ошибка запроса Create")
 	}
 
-	err := newReq.Get("123")
+	err := newReq.Get(result.Id)
 	if err != nil {
 		t.Error("Ошибка запроса GET")
 	}
